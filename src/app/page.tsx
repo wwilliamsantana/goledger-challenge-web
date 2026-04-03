@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import api from "@/lib/axios";
 import type { TvShow } from "@/lib/types";
 import { TvShowFormDialog } from "@/components/tv-show-form-dialog";
 import { DeleteShowDialog } from "@/components/cascade-delete-dialog";
@@ -23,12 +24,9 @@ export default function Home() {
   const fetchShows = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/query/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: { selector: { "@assetType": "tvShows" } } }),
+      const { data } = await api.post("/query/search", {
+        query: { selector: { "@assetType": "tvShows" } },
       });
-      const data = await res.json();
       setShows(data.result || []);
     } catch {
       toast.error("Erro ao carregar séries");

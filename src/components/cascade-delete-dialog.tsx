@@ -14,28 +14,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 import type { TvShow, Season, Episode } from "@/lib/types";
 
 async function searchAssets(selector: Record<string, unknown>) {
-  const res = await fetch("/api/query/search", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: { selector } }),
+  const { data } = await api.post("/query/search", {
+    query: { selector },
   });
-  const data = await res.json();
   return data.result || [];
 }
 
 async function deleteAsset(key: Record<string, unknown>) {
-  const res = await fetch("/api/invoke/deleteAsset", {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ key }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || "Erro ao deletar");
-  }
+  await api.delete("/invoke/deleteAsset", { data: { key } });
 }
 
 // ─── Delete TV Show (cascade: episodes → seasons → show) ───

@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, History } from "lucide-react";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 import type { TvShow, Season, Episode } from "@/lib/types";
 import { AppBreadcrumb } from "@/components/app-breadcrumb";
 import { EpisodeFormDialog } from "@/components/episode-form-dialog";
@@ -33,51 +34,38 @@ export default function SeasonDetailPage() {
     setLoading(true);
     try {
       // Fetch show
-      const showRes = await fetch("/api/query/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: { selector: { "@assetType": "tvShows", title: showTitle } } }),
+      const { data: showData } = await api.post("/query/search", {
+        query: { selector: { "@assetType": "tvShows", title: showTitle } },
       });
-      const showData = await showRes.json();
       const foundShow = showData.result?.[0] as TvShow | undefined;
       setShow(foundShow || null);
 
       if (!foundShow) return;
 
       // Fetch season
-      const seasonRes = await fetch("/api/query/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: {
-            selector: {
-              "@assetType": "seasons",
-              number: seasonNumber,
-              tvShow: { "@assetType": "tvShows", "@key": foundShow["@key"] },
-            },
+      const { data: seasonData } = await api.post("/query/search", {
+        query: {
+          selector: {
+            "@assetType": "seasons",
+            number: seasonNumber,
+            tvShow: { "@assetType": "tvShows", "@key": foundShow["@key"] },
           },
-        }),
+        },
       });
-      const seasonData = await seasonRes.json();
       const foundSeason = seasonData.result?.[0] as Season | undefined;
       setSeason(foundSeason || null);
 
       if (!foundSeason) return;
 
       // Fetch episodes
-      const epRes = await fetch("/api/query/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: {
-            selector: {
-              "@assetType": "episodes",
-              season: { "@assetType": "seasons", "@key": foundSeason["@key"] },
-            },
+      const { data: epData } = await api.post("/query/search", {
+        query: {
+          selector: {
+            "@assetType": "episodes",
+            season: { "@assetType": "seasons", "@key": foundSeason["@key"] },
           },
-        }),
+        },
       });
-      const epData = await epRes.json();
       const sorted = (epData.result || []).sort(
         (a: Episode, b: Episode) => a.episodeNumber - b.episodeNumber
       );
@@ -97,10 +85,8 @@ export default function SeasonDetailPage() {
     if (!deleteTarget || !show || !season) return;
     setDeleting(true);
     try {
-      const res = await fetch("/api/invoke/deleteAsset", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      await api.delete("/invoke/deleteAsset", {
+        data: {
           key: {
             "@assetType": "episodes",
             episodeNumber: deleteTarget.episodeNumber,
@@ -110,9 +96,8 @@ export default function SeasonDetailPage() {
               tvShow: { "@assetType": "tvShows", title: show.title },
             },
           },
-        }),
+        },
       });
-      if (!res.ok) throw new Error();
       toast.success(`Episódio ${deleteTarget.episodeNumber} removido`);
       setDeleteTarget(null);
       fetchData();

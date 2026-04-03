@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil, Trash2, History } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import api from "@/lib/axios";
 import type { TvShow, Season } from "@/lib/types";
 import { AppBreadcrumb } from "@/components/app-breadcrumb";
 import { SeasonFormDialog } from "@/components/season-form-dialog";
@@ -30,31 +31,21 @@ export default function ShowDetailPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const showRes = await fetch("/api/query/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: { selector: { "@assetType": "tvShows", title: showTitle } },
-        }),
+      const { data: showData } = await api.post("/query/search", {
+        query: { selector: { "@assetType": "tvShows", title: showTitle } },
       });
-      const showData = await showRes.json();
       const foundShow = showData.result?.[0] as TvShow | undefined;
       setShow(foundShow || null);
 
       if (foundShow) {
-        const seasonsRes = await fetch("/api/query/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: {
-              selector: {
-                "@assetType": "seasons",
-                tvShow: { "@assetType": "tvShows", "@key": foundShow["@key"] },
-              },
+        const { data: seasonsData } = await api.post("/query/search", {
+          query: {
+            selector: {
+              "@assetType": "seasons",
+              tvShow: { "@assetType": "tvShows", "@key": foundShow["@key"] },
             },
-          }),
+          },
         });
-        const seasonsData = await seasonsRes.json();
         const sorted = (seasonsData.result || []).sort(
           (a: Season, b: Season) => a.number - b.number
         );

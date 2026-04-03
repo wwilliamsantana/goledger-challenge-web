@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 import type { TvShow, Season, Episode } from "@/lib/types";
 
 const episodeSchema = z.object({
@@ -100,12 +101,7 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
           releaseDate: dateISO,
         };
         if (ratingValue != null) updatePayload.rating = ratingValue;
-        const res = await fetch("/api/invoke/updateAsset", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ update: updatePayload }),
-        });
-        if (!res.ok) throw new Error();
+        await api.put("/invoke/updateAsset", { update: updatePayload });
         toast.success("Episódio atualizado");
       } else {
         const createPayload: Record<string, unknown> = {
@@ -117,12 +113,7 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
           releaseDate: dateISO,
         };
         if (ratingValue != null) createPayload.rating = ratingValue;
-        const res = await fetch("/api/invoke/createAsset", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ asset: [createPayload] }),
-        });
-        if (!res.ok) throw new Error();
+        await api.post("/invoke/createAsset", { asset: [createPayload] });
         toast.success("Episódio criado");
       }
       onOpenChange(false);

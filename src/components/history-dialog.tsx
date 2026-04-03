@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 
 interface HistoryEntry {
   _txId: string;
@@ -33,13 +34,9 @@ export function HistoryDialog({ open, onOpenChange, assetKey, assetLabel }: Prop
   useEffect(() => {
     if (!open) return;
     setLoading(true);
-    fetch("/api/query/readAssetHistory", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: assetKey }),
-    })
-      .then((res) => res.json())
-      .then((data) => setEntries(Array.isArray(data) ? data : data.result || []))
+    api
+      .post("/query/readAssetHistory", { key: assetKey })
+      .then(({ data }) => setEntries(Array.isArray(data) ? data : data.result || []))
       .catch(() => toast.error("Erro ao carregar histórico"))
       .finally(() => setLoading(false));
   }, [open, assetKey]);

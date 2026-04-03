@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 import type { TvShow, Season } from "@/lib/types";
 
 const seasonSchema = z.object({
@@ -67,36 +68,26 @@ export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }
     setSaving(true);
     try {
       if (isEdit) {
-        const res = await fetch("/api/invoke/updateAsset", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            update: {
-              "@assetType": "seasons",
-              number: season.number,
-              tvShow: { "@assetType": "tvShows", title: show.title },
-              year: Number(data.year),
-            },
-          }),
+        await api.put("/invoke/updateAsset", {
+          update: {
+            "@assetType": "seasons",
+            number: season.number,
+            tvShow: { "@assetType": "tvShows", title: show.title },
+            year: Number(data.year),
+          },
         });
-        if (!res.ok) throw new Error();
         toast.success("Temporada atualizada");
       } else {
-        const res = await fetch("/api/invoke/createAsset", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            asset: [
-              {
-                "@assetType": "seasons",
-                number: Number(data.number),
-                year: Number(data.year),
-                tvShow: { "@assetType": "tvShows", title: show.title },
-              },
-            ],
-          }),
+        await api.post("/invoke/createAsset", {
+          asset: [
+            {
+              "@assetType": "seasons",
+              number: Number(data.number),
+              year: Number(data.year),
+              tvShow: { "@assetType": "tvShows", title: show.title },
+            },
+          ],
         });
-        if (!res.ok) throw new Error();
         toast.success("Temporada criada");
       }
       onOpenChange(false);

@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 import type { TvShow } from "@/lib/types";
 
 const tvShowSchema = z.object({
@@ -67,36 +68,26 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
     setSaving(true);
     try {
       if (isEdit) {
-        const res = await fetch("/api/invoke/updateAsset", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            update: {
+        await api.put("/invoke/updateAsset", {
+          update: {
+            "@assetType": "tvShows",
+            title: show.title,
+            description: data.description,
+            recommendedAge: Number(data.recommendedAge),
+          },
+        });
+        toast.success("Série atualizada");
+      } else {
+        await api.post("/invoke/createAsset", {
+          asset: [
+            {
               "@assetType": "tvShows",
-              title: show.title,
+              title: data.title,
               description: data.description,
               recommendedAge: Number(data.recommendedAge),
             },
-          }),
+          ],
         });
-        if (!res.ok) throw new Error();
-        toast.success("Série atualizada");
-      } else {
-        const res = await fetch("/api/invoke/createAsset", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            asset: [
-              {
-                "@assetType": "tvShows",
-                title: data.title,
-                description: data.description,
-                recommendedAge: Number(data.recommendedAge),
-              },
-            ],
-          }),
-        });
-        if (!res.ok) throw new Error();
         toast.success("Série criada");
       }
       onOpenChange(false);
