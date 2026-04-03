@@ -18,10 +18,10 @@ interface Crumb {
 
 export function AppBreadcrumb({ items }: { items: Crumb[] }) {
   return (
-    <Breadcrumb className="mb-4">
+    <Breadcrumb className="mb-6 animate-fade-in">
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/" />} className="flex items-center gap-1">
+          <BreadcrumbLink render={<Link href="/" />} className="flex items-center gap-1 hover:text-primary transition-colors duration-200">
             <Home className="h-3.5 w-3.5" />
             Início
           </BreadcrumbLink>

@@ -27,9 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${robotoCondensed.variable} ${roboto.variable} dark h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="min-h-full flex flex-col bg-background text-foreground overflow-x-hidden">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
+        <main className="flex-1 px-4 py-8">{children}</main>
         <Toaster richColors position="bottom-right" />
       </body>
     </html>
