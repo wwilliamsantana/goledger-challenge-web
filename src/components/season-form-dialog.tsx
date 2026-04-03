@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +17,23 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { TvShow, Season } from "@/lib/types";
 
+const seasonSchema = z.object({
+  number: z
+    .string()
+    .min(1, "Número é obrigatório")
+    .refine((v) => !isNaN(Number(v)), "Informe um número válido")
+    .refine((v) => Number.isInteger(Number(v)), "Deve ser um número inteiro")
+    .refine((v) => Number(v) >= 1, "Deve ser no mínimo 1"),
+  year: z
+    .string()
+    .min(1, "Ano é obrigatório")
+    .refine((v) => !isNaN(Number(v)), "Informe um ano válido")
+    .refine((v) => Number.isInteger(Number(v)), "Deve ser um número inteiro")
+    .refine((v) => Number(v) >= 1900, "Ano deve ser no mínimo 1900"),
+});
+
+type SeasonFormData = z.infer<typeof seasonSchema>;
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -24,22 +44,26 @@ interface Props {
 
 export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }: Props) {
   const isEdit = !!season;
-  const [number, setNumber] = useState("");
-  const [year, setYear] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SeasonFormData>({
+    resolver: zodResolver(seasonSchema),
+  });
 
   const resetForm = () => {
     if (season) {
-      setNumber(String(season.number));
-      setYear(String(season.year));
+      reset({ number: String(season.number), year: String(season.year) });
     } else {
-      setNumber("");
-      setYear("");
+      reset({ number: "", year: "" });
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: SeasonFormData) => {
     setSaving(true);
     try {
       if (isEdit) {
@@ -51,7 +75,7 @@ export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }
               "@assetType": "seasons",
               number: season.number,
               tvShow: { "@assetType": "tvShows", title: show.title },
-              year: Number(year),
+              year: Number(data.year),
             },
           }),
         });
@@ -65,8 +89,8 @@ export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }
             asset: [
               {
                 "@assetType": "seasons",
-                number: Number(number),
-                year: Number(year),
+                number: Number(data.number),
+                year: Number(data.year),
                 tvShow: { "@assetType": "tvShows", title: show.title },
               },
             ],
@@ -96,19 +120,18 @@ export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar Temporada" : "Nova Temporada"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="number">Número</Label>
             <Input
               id="number"
               type="number"
               min={1}
-              value={number}
-              onChange={(e) => setNumber(e.target.value)}
+              {...register("number")}
               disabled={isEdit}
-              required
               placeholder="Ex: 1"
             />
+            {errors.number && <p className="text-sm text-destructive">{errors.number.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="year">Ano de Lançamento</Label>
@@ -116,11 +139,10 @@ export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }
               id="year"
               type="number"
               min={1900}
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              required
+              {...register("year")}
               placeholder="Ex: 2008"
             />
+            {errors.year && <p className="text-sm text-destructive">{errors.year.message}</p>}
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>

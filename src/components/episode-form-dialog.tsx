@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +18,24 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { TvShow, Season, Episode } from "@/lib/types";
 
+const episodeSchema = z.object({
+  episodeNumber: z
+    .string()
+    .min(1, "Número do episódio é obrigatório")
+    .refine((v) => !isNaN(Number(v)), "Informe um número válido")
+    .refine((v) => Number.isInteger(Number(v)), "Deve ser um número inteiro")
+    .refine((v) => Number(v) >= 1, "Deve ser no mínimo 1"),
+  title: z.string().min(1, "Título é obrigatório"),
+  description: z.string().min(1, "Descrição é obrigatória"),
+  releaseDate: z.string().min(1, "Data de lançamento é obrigatória"),
+  rating: z
+    .string()
+    .optional()
+    .refine((v) => !v || (!isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 10), "Nota deve ser entre 0 e 10"),
+});
+
+type EpisodeFormData = z.infer<typeof episodeSchema>;
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -26,26 +47,34 @@ interface Props {
 
 export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, onSuccess }: Props) {
   const isEdit = !!episode;
-  const [episodeNumber, setEpisodeNumber] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [releaseDate, setReleaseDate] = useState("");
-  const [rating, setRating] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EpisodeFormData>({
+    resolver: zodResolver(episodeSchema),
+  });
 
   const resetForm = () => {
     if (episode) {
-      setEpisodeNumber(String(episode.episodeNumber));
-      setTitle(episode.title);
-      setDescription(episode.description);
-      setReleaseDate(episode.releaseDate.split("T")[0]);
-      setRating(episode.rating != null ? String(episode.rating) : "");
+      reset({
+        episodeNumber: String(episode.episodeNumber),
+        title: episode.title,
+        description: episode.description,
+        releaseDate: episode.releaseDate.split("T")[0],
+        rating: episode.rating != null ? String(episode.rating) : "",
+      });
     } else {
-      setEpisodeNumber("");
-      setTitle("");
-      setDescription("");
-      setReleaseDate("");
-      setRating("");
+      reset({
+        episodeNumber: "",
+        title: "",
+        description: "",
+        releaseDate: "",
+        rating: "",
+      });
     }
   };
 
@@ -55,22 +84,22 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
     tvShow: { "@assetType": "tvShows" as const, title: show.title },
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: EpisodeFormData) => {
     setSaving(true);
     try {
-      const dateISO = new Date(releaseDate + "T00:00:00Z").toISOString();
+      const dateISO = new Date(data.releaseDate + "T00:00:00Z").toISOString();
+      const ratingValue = data.rating ? Number(data.rating) : undefined;
 
       if (isEdit) {
         const updatePayload: Record<string, unknown> = {
           "@assetType": "episodes",
           episodeNumber: episode.episodeNumber,
           season: seasonRef,
-          title,
-          description,
+          title: data.title,
+          description: data.description,
           releaseDate: dateISO,
         };
-        if (rating) updatePayload.rating = Number(rating);
+        if (ratingValue != null) updatePayload.rating = ratingValue;
         const res = await fetch("/api/invoke/updateAsset", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -81,13 +110,13 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
       } else {
         const createPayload: Record<string, unknown> = {
           "@assetType": "episodes",
-          episodeNumber: Number(episodeNumber),
+          episodeNumber: Number(data.episodeNumber),
           season: seasonRef,
-          title,
-          description,
+          title: data.title,
+          description: data.description,
           releaseDate: dateISO,
         };
-        if (rating) createPayload.rating = Number(rating);
+        if (ratingValue != null) createPayload.rating = ratingValue;
         const res = await fetch("/api/invoke/createAsset", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -117,38 +146,35 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar Episódio" : "Novo Episódio"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="epNumber">Número do Episódio</Label>
             <Input
               id="epNumber"
               type="number"
               min={1}
-              value={episodeNumber}
-              onChange={(e) => setEpisodeNumber(e.target.value)}
+              {...register("episodeNumber")}
               disabled={isEdit}
-              required
             />
+            {errors.episodeNumber && <p className="text-sm text-destructive">{errors.episodeNumber.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="epTitle">Título</Label>
             <Input
               id="epTitle"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
+              {...register("title")}
               placeholder="Ex: Pilot"
             />
+            {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="epDesc">Descrição</Label>
             <Textarea
               id="epDesc"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
+              {...register("description")}
               rows={3}
             />
+            {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -156,10 +182,9 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
               <Input
                 id="epDate"
                 type="date"
-                value={releaseDate}
-                onChange={(e) => setReleaseDate(e.target.value)}
-                required
+                {...register("releaseDate")}
               />
+              {errors.releaseDate && <p className="text-sm text-destructive">{errors.releaseDate.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="epRating">Nota (opcional)</Label>
@@ -169,10 +194,10 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
                 min={0}
                 max={10}
                 step={0.1}
-                value={rating}
-                onChange={(e) => setRating(e.target.value)}
+                {...register("rating")}
                 placeholder="0 - 10"
               />
+              {errors.rating && <p className="text-sm text-destructive">{errors.rating.message}</p>}
             </div>
           </div>
           <div className="flex justify-end gap-2">

@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +18,19 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { TvShow } from "@/lib/types";
 
+const tvShowSchema = z.object({
+  title: z.string().min(1, "Título é obrigatório"),
+  description: z.string().min(1, "Descrição é obrigatória"),
+  recommendedAge: z
+    .string()
+    .min(1, "Classificação indicativa é obrigatória")
+    .refine((v) => !isNaN(Number(v)), "Informe um número válido")
+    .refine((v) => Number.isInteger(Number(v)), "Deve ser um número inteiro")
+    .refine((v) => Number(v) >= 0, "Deve ser no mínimo 0"),
+});
+
+type TvShowFormData = z.infer<typeof tvShowSchema>;
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -24,25 +40,30 @@ interface Props {
 
 export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props) {
   const isEdit = !!show;
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [recommendedAge, setRecommendedAge] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TvShowFormData>({
+    resolver: zodResolver(tvShowSchema),
+  });
 
   const resetForm = () => {
     if (show) {
-      setTitle(show.title);
-      setDescription(show.description);
-      setRecommendedAge(String(show.recommendedAge));
+      reset({
+        title: show.title,
+        description: show.description,
+        recommendedAge: String(show.recommendedAge),
+      });
     } else {
-      setTitle("");
-      setDescription("");
-      setRecommendedAge("");
+      reset({ title: "", description: "", recommendedAge: "" });
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: TvShowFormData) => {
     setSaving(true);
     try {
       if (isEdit) {
@@ -53,8 +74,8 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
             update: {
               "@assetType": "tvShows",
               title: show.title,
-              description,
-              recommendedAge: Number(recommendedAge),
+              description: data.description,
+              recommendedAge: Number(data.recommendedAge),
             },
           }),
         });
@@ -68,9 +89,9 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
             asset: [
               {
                 "@assetType": "tvShows",
-                title,
-                description,
-                recommendedAge: Number(recommendedAge),
+                title: data.title,
+                description: data.description,
+                recommendedAge: Number(data.recommendedAge),
               },
             ],
           }),
@@ -99,28 +120,26 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar Série" : "Nova Série"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Título</Label>
             <Input
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              {...register("title")}
               disabled={isEdit}
-              required
               placeholder="Ex: Breaking Bad"
             />
+            {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Descrição</Label>
             <Textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
+              {...register("description")}
               rows={3}
               placeholder="Sinopse da série"
             />
+            {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="age">Classificação Indicativa</Label>
@@ -128,11 +147,10 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
               id="age"
               type="number"
               min={0}
-              value={recommendedAge}
-              onChange={(e) => setRecommendedAge(e.target.value)}
-              required
+              {...register("recommendedAge")}
               placeholder="Ex: 16"
             />
+            {errors.recommendedAge && <p className="text-sm text-destructive">{errors.recommendedAge.message}</p>}
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
