@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Roboto_Condensed, Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/header";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const robotoCondensed = Roboto_Condensed({
+  variable: "--font-roboto-condensed",
   subsets: ["latin"],
+});
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -20,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} dark h-full antialiased`}>
+    <html lang="en" className={`${robotoCondensed.variable} ${roboto.variable} dark h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
