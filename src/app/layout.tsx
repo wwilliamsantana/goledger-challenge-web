@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
+import { Header } from "@/components/header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -8,8 +10,8 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Goledger Challenge",
-  description: "Challenge for Goledger",
+  title: "StreamHub — TV Show Manager",
+  description: "Manage TV Shows, Seasons & Episodes on GoLedger blockchain",
 };
 
 export default function RootLayout({
@@ -18,11 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${geistSans.variable} dark h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        <Header />
+        <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
+        <Toaster richColors position="bottom-right" />
+      </body>
     </html>
   );
 }
