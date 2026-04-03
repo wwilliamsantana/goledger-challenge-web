@@ -93,16 +93,21 @@ export function DeleteShowDialog({ open, onOpenChange, show, onSuccess }: Delete
     if (!show) return;
     setDeleting(true);
     try {
+      // Build a map from season @key to season number for episode deletion
+      const seasonByKey = new Map(seasons.map((s) => [s["@key"], s]));
+
       // 1. Delete all episodes
       for (let i = 0; i < episodes.length; i++) {
         const ep = episodes[i];
+        const parentSeason = seasonByKey.get(ep.season["@key"]);
+        if (!parentSeason) continue;
         setProgress(`Removendo episódio ${i + 1}/${episodes.length}...`);
         await deleteAsset({
           "@assetType": "episodes",
           episodeNumber: ep.episodeNumber,
           season: {
             "@assetType": "seasons",
-            number: ep.season.number,
+            number: parentSeason.number,
             tvShow: { "@assetType": "tvShows", title: show.title },
           },
         });
