@@ -12,7 +12,7 @@ import Link from "next/link";
 import type { TvShow, Season } from "@/lib/types";
 import { AppBreadcrumb } from "@/components/app-breadcrumb";
 import { SeasonFormDialog } from "@/components/season-form-dialog";
-import { ConfirmDialog } from "@/components/confirm-dialog";
+import { DeleteSeasonDialog } from "@/components/cascade-delete-dialog";
 import { HistoryDialog } from "@/components/history-dialog";
 
 export default function ShowDetailPage() {
@@ -25,7 +25,6 @@ export default function ShowDetailPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingSeason, setEditingSeason] = useState<Season | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Season | null>(null);
-  const [deleting, setDeleting] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -71,32 +70,6 @@ export default function ShowDetailPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const handleDelete = async () => {
-    if (!deleteTarget || !show) return;
-    setDeleting(true);
-    try {
-      const res = await fetch("/api/invoke/deleteAsset", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          key: {
-            "@assetType": "seasons",
-            number: deleteTarget.number,
-            tvShow: { "@assetType": "tvShows", title: show.title },
-          },
-        }),
-      });
-      if (!res.ok) throw new Error();
-      toast.success(`Temporada ${deleteTarget.number} removida`);
-      setDeleteTarget(null);
-      fetchData();
-    } catch {
-      toast.error("Erro ao deletar temporada");
-    } finally {
-      setDeleting(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -190,14 +163,15 @@ export default function ShowDetailPage() {
         onSuccess={fetchData}
       />
 
-      <ConfirmDialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Excluir temporada"
-        description={`Tem certeza que deseja excluir a Temporada ${deleteTarget?.number}?`}
-        onConfirm={handleDelete}
-        loading={deleting}
-      />
+      {show && (
+        <DeleteSeasonDialog
+          open={!!deleteTarget}
+          onOpenChange={(open) => !open && setDeleteTarget(null)}
+          season={deleteTarget}
+          show={show}
+          onSuccess={fetchData}
+        />
+      )}
 
       <HistoryDialog
         open={historyOpen}
