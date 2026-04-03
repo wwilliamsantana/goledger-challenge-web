@@ -38,9 +38,7 @@ export interface Episode {
   };
 }
 
-export interface HistoryEntry<T> {
-  "@assetType": string;
-  "@key": string;
+export interface HistoryEntry {
   _txId: string;
   _timestamp: string;
   _isDelete: boolean;

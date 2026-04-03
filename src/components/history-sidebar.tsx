@@ -7,13 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import api from "@/lib/axios";
-
-interface HistoryEntry {
-  _txId: string;
-  _timestamp: string;
-  _isDelete: boolean;
-  [key: string]: unknown;
-}
+import type { HistoryEntry } from "@/lib/types";
 
 interface HistorySidebarProps {
   open: boolean;
@@ -128,10 +122,10 @@ export function HistorySidebar({ open, onClose, assetKey, assetLabel }: HistoryS
                           <div className="relative shrink-0 mt-1.5">
                             <div
                               className={`w-[11px] h-[11px] rounded-full border-2 ${isCreated
-                                  ? "bg-primary border-primary shadow-sm shadow-primary/50"
-                                  : isDeleted
-                                    ? "bg-destructive border-destructive"
-                                    : "bg-card border-muted-foreground/40 group-hover:border-primary/60"
+                                ? "bg-primary border-primary shadow-sm shadow-primary/50"
+                                : isDeleted
+                                  ? "bg-destructive border-destructive"
+                                  : "bg-card border-muted-foreground/40 group-hover:border-primary/60"
                                 } transition-colors duration-300`}
                             />
                           </div>

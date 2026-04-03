@@ -12,13 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import api from "@/lib/axios";
-
-interface HistoryEntry {
-  _txId: string;
-  _timestamp: string;
-  _isDelete: boolean;
-  [key: string]: unknown;
-}
+import type { HistoryEntry } from "@/lib/types";
 
 interface Props {
   open: boolean;
