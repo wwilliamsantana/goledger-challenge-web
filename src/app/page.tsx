@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import type { TvShow } from "@/lib/types";
 import { TvShowFormDialog } from "@/components/tv-show-form-dialog";
-import { ConfirmDialog } from "@/components/confirm-dialog";
+import { DeleteShowDialog } from "@/components/cascade-delete-dialog";
 
 export default function Home() {
   const [shows, setShows] = useState<TvShow[]>([]);
@@ -19,7 +19,6 @@ export default function Home() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingShow, setEditingShow] = useState<TvShow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<TvShow | null>(null);
-  const [deleting, setDeleting] = useState(false);
 
   const fetchShows = useCallback(async () => {
     setLoading(true);
@@ -41,26 +40,6 @@ export default function Home() {
   useEffect(() => {
     fetchShows();
   }, [fetchShows]);
-
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      const res = await fetch("/api/invoke/deleteAsset", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: { "@assetType": "tvShows", title: deleteTarget.title } }),
-      });
-      if (!res.ok) throw new Error();
-      toast.success(`"${deleteTarget.title}" removido`);
-      setDeleteTarget(null);
-      fetchShows();
-    } catch {
-      toast.error("Erro ao deletar série");
-    } finally {
-      setDeleting(false);
-    }
-  };
 
   return (
     <>
@@ -129,13 +108,11 @@ export default function Home() {
         onSuccess={fetchShows}
       />
 
-      <ConfirmDialog
+      <DeleteShowDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Excluir série"
-        description={`Tem certeza que deseja excluir "${deleteTarget?.title}"? Esta ação não pode ser desfeita.`}
-        onConfirm={handleDelete}
-        loading={deleting}
+        show={deleteTarget}
+        onSuccess={fetchShows}
       />
     </>
   );
