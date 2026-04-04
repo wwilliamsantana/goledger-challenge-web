@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     default: "LedgerCast — TV Show Manager",
     template: "%s | LedgerCast",
   },
+  icons: {
+    icon: "/favicon.ico"
+  },
   description:
     "Gerencie séries, temporadas e episódios com imutabilidade e rastreabilidade na blockchain GoLedger.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
