@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { apiPost } from "@/lib/api";
+import { apiQuery } from "@/lib/api";
 import type { TvShow, Season, Episode } from "@/lib/types";
 import { SeasonDetailClient } from "@/components/season-detail-client";
 
@@ -22,13 +22,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function getSeasonData(showTitle: string, seasonNumber: number) {
-  const showData = await apiPost("/query/search", {
+  const showData = await apiQuery("/query/search", {
     query: { selector: { "@assetType": "tvShows", title: showTitle } },
   });
   const show = showData.result?.[0] as TvShow | undefined;
   if (!show) return null;
 
-  const seasonData = await apiPost("/query/search", {
+  const seasonData = await apiQuery("/query/search", {
     query: {
       selector: {
         "@assetType": "seasons",
@@ -40,7 +40,7 @@ async function getSeasonData(showTitle: string, seasonNumber: number) {
   const season = seasonData.result?.[0] as Season | undefined;
   if (!season) return null;
 
-  const epData = await apiPost("/query/search", {
+  const epData = await apiQuery("/query/search", {
     query: {
       selector: {
         "@assetType": "episodes",

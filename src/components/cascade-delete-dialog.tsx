@@ -54,15 +54,15 @@ export function DeleteShowDialog({ open, onOpenChange, show, onSuccess }: Delete
       });
       setSeasons(foundSeasons);
 
-      const allEpisodes: Episode[] = [];
-      for (const season of foundSeasons) {
-        const eps: Episode[] = await searchAssets({
-          "@assetType": "episodes",
-          season: { "@assetType": "seasons", "@key": season["@key"] },
-        });
-        allEpisodes.push(...eps);
-      }
-      setEpisodes(allEpisodes);
+      const episodeArrays = await Promise.all(
+        foundSeasons.map((season) =>
+          searchAssets({
+            "@assetType": "episodes",
+            season: { "@assetType": "seasons", "@key": season["@key"] },
+          }) as Promise<Episode[]>
+        )
+      );
+      setEpisodes(episodeArrays.flat());
     } catch {
       toast.error("Erro ao verificar dependências");
     } finally {

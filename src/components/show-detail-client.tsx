@@ -12,7 +12,7 @@ import type { TvShow, Season } from "@/lib/types";
 import { AppBreadcrumb } from "@/components/app-breadcrumb";
 import { SeasonFormDialog } from "@/components/season-form-dialog";
 import { DeleteSeasonDialog } from "@/components/cascade-delete-dialog";
-import { HistoryDialog } from "@/components/history-dialog";
+import { HistorySidebar } from "@/components/history-sidebar";
 
 interface ShowDetailClientProps {
   show: TvShow;
@@ -149,9 +149,9 @@ export function ShowDetailClient({ show, initialSeasons }: ShowDetailClientProps
         onSuccess={refreshSeasons}
       />
 
-      <HistoryDialog
+      <HistorySidebar
         open={historyOpen}
-        onOpenChange={setHistoryOpen}
+        onClose={() => setHistoryOpen(false)}
         assetKey={{ "@assetType": "tvShows", title: show.title }}
         assetLabel={show.title}
       />

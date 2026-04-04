@@ -1,6 +1,6 @@
 
 import type { Metadata } from "next";
-import { apiPost } from "@/lib/api";
+import { apiQuery } from "@/lib/api";
 import type { TvShow } from "@/lib/types";
 import { HomeClient } from "@/components/home-client";
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 async function getShows(): Promise<TvShow[]> {
   try {
-    const data = await apiPost("/query/search", {
+    const data = await apiQuery("/query/search", {
       query: { selector: { "@assetType": "tvShows" } },
     });
     return data.result || [];

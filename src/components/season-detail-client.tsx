@@ -11,7 +11,7 @@ import type { TvShow, Season, Episode } from "@/lib/types";
 import { AppBreadcrumb } from "@/components/app-breadcrumb";
 import { EpisodeFormDialog } from "@/components/episode-form-dialog";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { HistoryDialog } from "@/components/history-dialog";
+import { HistorySidebar } from "@/components/history-sidebar";
 
 interface SeasonDetailClientProps {
   show: TvShow;
@@ -187,9 +187,9 @@ export function SeasonDetailClient({ show, season, initialEpisodes }: SeasonDeta
         loading={deleting}
       />
 
-      <HistoryDialog
+      <HistorySidebar
         open={historyOpen}
-        onOpenChange={setHistoryOpen}
+        onClose={() => setHistoryOpen(false)}
         assetKey={{
           "@assetType": "seasons",
           number: season.number,
