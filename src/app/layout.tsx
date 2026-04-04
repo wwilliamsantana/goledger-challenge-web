@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${robotoCondensed.variable} ${roboto.variable} dark h-full antialiased`}>
+    <html lang="pt-BR" data-scroll-behavior="smooth" className={`${robotoCondensed.variable} ${roboto.variable} dark h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground overflow-x-hidden">
         <Header />
         <main className="flex-1 px-4 py-8">{children}</main>
