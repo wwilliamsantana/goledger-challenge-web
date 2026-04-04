@@ -19,14 +19,16 @@ export async function apiPost(path: string, body: unknown) {
   return res.json();
 }
 
+export const QUERY_CACHE_TAG = "ledger-query";
+
 /** Versão cacheada de apiPost para consultas somente-leitura em Server Components.
- *  Revalida a cada 30 segundos via ISR do Next.js. */
+ *  Revalida a cada 30 segundos ou sob demanda via revalidateTag. */
 export async function apiQuery(path: string, body: unknown) {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: authHeader },
     body: JSON.stringify(body),
-    next: { revalidate: 30 },
+    next: { revalidate: 30, tags: [QUERY_CACHE_TAG] },
   });
   if (!res.ok) {
     const text = await res.text();
