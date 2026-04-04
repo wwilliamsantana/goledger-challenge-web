@@ -12,9 +12,9 @@ export function HeroSection({ onExplore }: HeroSectionProps) {
     <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Background ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/8 rounded-full blur-[160px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[300px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-chart-2/5 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-200 h-100 bg-primary/8 rounded-full blur-[160px]" />
+        <div className="absolute bottom-1/4 left-1/4 w-100 h-75 bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 right-1/4 w-75 h-75 bg-chart-2/5 rounded-full blur-[100px]" />
       </div>
 
       {/* Grid pattern overlay */}

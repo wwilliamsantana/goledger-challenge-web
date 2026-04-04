@@ -83,7 +83,7 @@ export function SeasonDetailClient({ show, season, initialEpisodes }: SeasonDeta
       />
 
       <div className="relative mb-10 animate-fade-in">
-        <div className="absolute -top-16 left-0 w-[400px] h-[200px] bg-primary/8 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -top-16 left-0 w-100 h-50 bg-primary/8 rounded-full blur-[100px] pointer-events-none" />
         <div className="relative flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">

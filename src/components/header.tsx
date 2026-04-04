@@ -15,7 +15,7 @@ export function Header() {
         <nav className="ml-auto flex items-center gap-6 text-sm">
           <Link
             href="/"
-            className="text-muted-foreground hover:text-primary transition-colors duration-300 relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+            className="text-muted-foreground hover:text-primary transition-colors duration-300 relative after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
           >
             TV Shows
           </Link>

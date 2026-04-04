@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import {
   Dialog,
   DialogContent,
@@ -27,7 +27,7 @@ export function HistoryDialog({ open, onOpenChange, assetKey, assetLabel }: Prop
 
   useEffect(() => {
     if (!open) return;
-    setLoading(true);
+    startTransition(() => setLoading(true));
     api
       .post("/query/readAssetHistory", { key: assetKey })
       .then(({ data }) => setEntries(Array.isArray(data) ? data : data.result || []))

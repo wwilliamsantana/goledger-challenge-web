@@ -74,7 +74,7 @@ function ShowCard({ show, index, onEdit, onDelete, onHistory }: ShowCardProps) {
       </div>
 
       {/* Decorative gradient line */}
-      <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute bottom-0 left-6 right-6 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </motion.div>
   );
 }
@@ -145,7 +145,7 @@ export function ScrollCatalog({ shows, onEdit, onDelete, onHistory, onAdd }: Scr
 
       {/* Background ambient */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-100 bg-primary/5 rounded-full blur-[150px]" />
       </div>
 
       {/* Grid: 4 columns, shows all cards */}

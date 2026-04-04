@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +22,7 @@ export function HistorySidebar({ open, onClose, assetKey, assetLabel }: HistoryS
 
   useEffect(() => {
     if (!open || !assetKey) return;
-    setLoading(true);
+    startTransition(() => setLoading(true));
     api
       .post("/query/readAssetHistory", { key: assetKey })
       .then(({ data }) => setEntries(Array.isArray(data) ? data : data.result || []))
@@ -54,7 +54,7 @@ export function HistorySidebar({ open, onClose, assetKey, assetLabel }: HistoryS
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-60 bg-black/50 backdrop-blur-sm"
             onClick={onClose}
           />
 
@@ -64,7 +64,7 @@ export function HistorySidebar({ open, onClose, assetKey, assetLabel }: HistoryS
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 left-0 bottom-0 z-[70] w-full max-w-md bg-card/95 backdrop-blur-2xl border-r border-border/50 shadow-2xl shadow-black/40 overflow-hidden flex flex-col"
+            className="fixed top-0 left-0 bottom-0 z-70 w-full max-w-md bg-card/95 backdrop-blur-2xl border-r border-border/50 shadow-2xl shadow-black/40 overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-border/30">
@@ -101,7 +101,7 @@ export function HistorySidebar({ open, onClose, assetKey, assetLabel }: HistoryS
               ) : (
                 <div className="relative">
                   {/* Timeline line */}
-                  <div className="absolute left-[5px] top-3 bottom-3 w-px bg-gradient-to-b from-primary/50 via-border/50 to-transparent" />
+                  <div className="absolute left-1.25 top-3 bottom-3 w-px bg-linear-to-b from-primary/50 via-border/50 to-transparent" />
 
                   {/* Timeline entries */}
                   <div className="space-y-8">
@@ -121,7 +121,7 @@ export function HistorySidebar({ open, onClose, assetKey, assetLabel }: HistoryS
                           {/* Timeline dot */}
                           <div className="relative shrink-0 mt-1.5">
                             <div
-                              className={`w-[11px] h-[11px] rounded-full border-2 ${isCreated
+                              className={`w-2.75 h-2.75 rounded-full border-2 ${isCreated
                                 ? "bg-primary border-primary shadow-sm shadow-primary/50"
                                 : isDeleted
                                   ? "bg-destructive border-destructive"
