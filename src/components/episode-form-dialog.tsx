@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -59,7 +59,8 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
     resolver: zodResolver(episodeSchema),
   });
 
-  const resetForm = () => {
+  useEffect(() => {
+    if (!open) return;
     if (episode) {
       reset({
         episodeNumber: String(episode.episodeNumber),
@@ -77,7 +78,7 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
         rating: "",
       });
     }
-  };
+  }, [open, episode, reset]);
 
   const seasonRef = {
     "@assetType": "seasons" as const,
@@ -126,13 +127,7 @@ export function EpisodeFormDialog({ open, onOpenChange, episode, show, season, o
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        onOpenChange(o);
-        if (o) resetForm();
-      }}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar Episódio" : "Novo Episódio"}</DialogTitle>

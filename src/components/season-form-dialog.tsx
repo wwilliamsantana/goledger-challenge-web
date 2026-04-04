@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -56,13 +56,14 @@ export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }
     resolver: zodResolver(seasonSchema),
   });
 
-  const resetForm = () => {
+  useEffect(() => {
+    if (!open) return;
     if (season) {
       reset({ number: String(season.number), year: String(season.year) });
     } else {
       reset({ number: "", year: "" });
     }
-  };
+  }, [open, season, reset]);
 
   const onSubmit = async (data: SeasonFormData) => {
     setSaving(true);
@@ -100,13 +101,7 @@ export function SeasonFormDialog({ open, onOpenChange, season, show, onSuccess }
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        onOpenChange(o);
-        if (o) resetForm();
-      }}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar Temporada" : "Nova Temporada"}</DialogTitle>

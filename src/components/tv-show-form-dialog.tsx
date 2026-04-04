@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -52,7 +52,8 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
     resolver: zodResolver(tvShowSchema),
   });
 
-  const resetForm = () => {
+  useEffect(() => {
+    if (!open) return;
     if (show) {
       reset({
         title: show.title,
@@ -62,7 +63,7 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
     } else {
       reset({ title: "", description: "", recommendedAge: "" });
     }
-  };
+  }, [open, show, reset]);
 
   const onSubmit = async (data: TvShowFormData) => {
     setSaving(true);
@@ -100,13 +101,7 @@ export function TvShowFormDialog({ open, onOpenChange, show, onSuccess }: Props)
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        onOpenChange(o);
-        if (o) resetForm();
-      }}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar Série" : "Nova Série"}</DialogTitle>
