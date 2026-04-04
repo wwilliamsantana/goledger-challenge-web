@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, History, ArrowRight, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Pencil, Trash2, History, ArrowRight, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import type { TvShow } from "@/lib/types";
 
@@ -12,6 +14,14 @@ interface ShowCardProps {
   onEdit: (show: TvShow) => void;
   onDelete: (show: TvShow) => void;
   onHistory: (show: TvShow) => void;
+}
+
+interface ScrollCatalogProps {
+  shows: TvShow[];
+  onEdit: (show: TvShow) => void;
+  onDelete: (show: TvShow) => void;
+  onHistory: (show: TvShow) => void;
+  onAdd: () => void;
 }
 
 function ShowCard({ show, index, onEdit, onDelete, onHistory }: ShowCardProps) {
@@ -79,15 +89,13 @@ function ShowCard({ show, index, onEdit, onDelete, onHistory }: ShowCardProps) {
   );
 }
 
-interface ScrollCatalogProps {
-  shows: TvShow[];
-  onEdit: (show: TvShow) => void;
-  onDelete: (show: TvShow) => void;
-  onHistory: (show: TvShow) => void;
-  onAdd: () => void;
-}
-
 export function ScrollCatalog({ shows, onEdit, onDelete, onHistory, onAdd }: ScrollCatalogProps) {
+  const [search, setSearch] = useState("");
+
+  const filteredShows = shows.filter((s) =>
+    s.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   if (shows.length === 0) {
     return (
       <section className="min-h-[60vh] flex flex-col items-center justify-center px-4">
@@ -141,6 +149,15 @@ export function ScrollCatalog({ shows, onEdit, onDelete, onHistory, onAdd }: Scr
             <Plus className="h-3.5 w-3.5" /> Nova Série
           </button>
         </div>
+        <div className="relative mt-6 max-w-sm mx-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            placeholder="Buscar série..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 rounded-full bg-card/60 border-border/50 focus-visible:ring-primary/40"
+          />
+        </div>
       </motion.div>
 
       {/* Background ambient */}
@@ -150,7 +167,12 @@ export function ScrollCatalog({ shows, onEdit, onDelete, onHistory, onAdd }: Scr
 
       {/* Grid: 4 columns, shows all cards */}
       <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto">
-        {shows.map((show, i) => (
+        {filteredShows.length === 0 && (
+          <p className="col-span-full text-center text-muted-foreground py-10">
+            Nenhuma série encontrada para &ldquo;{search}&rdquo;.
+          </p>
+        )}
+        {filteredShows.map((show, i) => (
           <ShowCard
             key={show["@key"]}
             show={show}

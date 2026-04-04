@@ -69,7 +69,7 @@ export function HeroSection({ onExplore }: HeroSectionProps) {
             onClick={onExplore}
             className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full border border-primary/30 bg-primary/5 text-foreground font-medium text-base transition-all duration-500 hover:bg-primary/10 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
           >
-            <span>Explore the Catalog</span>
+            <span>Explore o Catálogo</span>
             <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
             <div className="absolute inset-0 rounded-full bg-primary/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </button>
