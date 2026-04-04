@@ -198,7 +198,7 @@ export default function SobrePage() {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-12 text-center text-xs text-muted-foreground/50"
         >
-          StreamHub · Powered by GoLedger Blockchain & Hyperledger Fabric
+          LedgerCast · Powered by GoLedger Blockchain & Hyperledger Fabric
         </motion.p>
       </div>
     </main>

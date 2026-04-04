@@ -44,8 +44,8 @@ export function HeroSection({ onExplore }: HeroSectionProps) {
           transition={{ duration: 1, delay: 0.4 }}
           className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]"
         >
-          <span className="gradient-text">Stream</span>
-          <span className="text-foreground">Hub</span>
+          <span className="gradient-text">Ledger</span>
+          <span className="text-foreground">Cast</span>
         </motion.h1>
 
         <motion.p

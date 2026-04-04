@@ -10,15 +10,9 @@ export function Header() {
             <Tv className="h-5 w-5 text-primary transition-transform duration-300 group-hover:scale-110" />
             <div className="absolute inset-0 blur-md bg-primary/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
-          <span className="gradient-text">StreamHub</span>
+          <span className="gradient-text">LedgerCast</span>
         </Link>
-        <nav className="ml-auto flex items-center gap-6 text-sm">
-          <Link
-            href="/"
-            className="text-muted-foreground hover:text-primary transition-colors duration-300 relative after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
-          >
-            TV Shows
-          </Link>
+        <nav className="ml-auto text-sm">
           <Link
             href="/sobre"
             className="text-muted-foreground hover:text-primary transition-colors duration-300 relative after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"

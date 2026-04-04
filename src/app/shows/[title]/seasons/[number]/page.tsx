@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { title, number } = await params;
   const showTitle = decodeURIComponent(title);
   return {
-    title: `${showTitle} — Temporada ${number} — StreamHub`,
-    description: `Episódios da Temporada ${number} de ${showTitle} no StreamHub.`,
+    title: `${showTitle} — Temporada ${number} — LedgerCast`,
+    description: `Episódios da Temporada ${number} de ${showTitle} no LedgerCast.`,
     openGraph: {
       title: `${showTitle} — Temporada ${number}`,
       description: `Episódios da Temporada ${number} de ${showTitle} registrados na blockchain GoLedger.`,

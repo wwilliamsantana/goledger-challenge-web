@@ -5,11 +5,11 @@ import type { TvShow } from "@/lib/types";
 import { HomeClient } from "@/components/home-client";
 
 export const metadata: Metadata = {
-  title: "StreamHub — Catálogo de Séries na Blockchain",
+  title: "LedgerCast — Catálogo de Séries na Blockchain",
   description:
     "Gerencie séries, temporadas e episódios com imutabilidade e rastreabilidade total na blockchain GoLedger.",
   openGraph: {
-    title: "StreamHub — Catálogo de Séries",
+    title: "LedgerCast — Catálogo de Séries",
     description:
       "Plataforma de gerenciamento de séries de TV com registro imutável em blockchain GoLedger.",
     type: "website",

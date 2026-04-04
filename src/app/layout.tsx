@@ -17,16 +17,16 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: {
-    default: "StreamHub — TV Show Manager",
-    template: "%s | StreamHub",
+    default: "LedgerCast — TV Show Manager",
+    template: "%s | LedgerCast",
   },
   description:
     "Gerencie séries, temporadas e episódios com imutabilidade e rastreabilidade na blockchain GoLedger.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   openGraph: {
     type: "website",
-    siteName: "StreamHub",
-    title: "StreamHub — TV Show Manager",
+    siteName: "LedgerCast",
+    title: "LedgerCast — TV Show Manager",
     description:
       "Plataforma de gerenciamento de séries de TV com registro imutável em blockchain GoLedger.",
     locale: "pt_BR",

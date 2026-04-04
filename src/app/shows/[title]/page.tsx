@@ -12,10 +12,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { title } = await params;
   const showTitle = decodeURIComponent(title);
   return {
-    title: `${showTitle} — StreamHub`,
-    description: `Temporadas e detalhes de ${showTitle} no StreamHub.`,
+    title: `${showTitle} — LedgerCast`,
+    description: `Temporadas e detalhes de ${showTitle} no LedgerCast.`,
     openGraph: {
-      title: `${showTitle} — StreamHub`,
+      title: `${showTitle} — LedgerCast`,
       description: `Temporadas e detalhes de ${showTitle} registrados na blockchain GoLedger.`,
     },
   };
