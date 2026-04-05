@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -24,14 +24,15 @@ interface ScrollCatalogProps {
   onAdd: () => void;
 }
 
-function ShowCard({ show, index, onEdit, onDelete, onHistory }: ShowCardProps) {
+const ShowCard = memo(function ShowCard({ show, index, onEdit, onDelete, onHistory }: ShowCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="group relative rounded-2xl border border-border/40 bg-card/70 backdrop-blur-xl p-6 shadow-lg shadow-black/10 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1"
+      className="group relative rounded-2xl border border-border/40 bg-card/70 backdrop-blur-xl p-6 shadow-lg shadow-black/10 transition-[border-color,box-shadow,transform] duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1"
+      style={{ willChange: "opacity, transform" }}
     >
       <Link href={`/shows/${encodeURIComponent(show.title)}`} className="absolute inset-0 z-0 rounded-2xl" />
 
@@ -87,7 +88,7 @@ function ShowCard({ show, index, onEdit, onDelete, onHistory }: ShowCardProps) {
       <div className="absolute bottom-0 left-6 right-6 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </motion.div>
   );
-}
+});
 
 export function ScrollCatalog({ shows, onEdit, onDelete, onHistory, onAdd }: ScrollCatalogProps) {
   const [search, setSearch] = useState("");

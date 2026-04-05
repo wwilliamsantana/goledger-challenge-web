@@ -26,6 +26,20 @@ export function HomeClient({ initialShows }: HomeClientProps) {
 
   const catalogRef = useRef<HTMLDivElement>(null);
 
+  const handleEdit = useCallback((show: TvShow) => {
+    setEditingShow(show);
+    setFormOpen(true);
+  }, []);
+
+  const handleDelete = useCallback((show: TvShow) => {
+    setDeleteTarget(show);
+  }, []);
+
+  const handleAdd = useCallback(() => {
+    setEditingShow(null);
+    setFormOpen(true);
+  }, []);
+
   const refreshShows = useCallback(async () => {
     try {
       const { data } = await api.post("/query/search", {
@@ -54,10 +68,10 @@ export function HomeClient({ initialShows }: HomeClientProps) {
       <div ref={catalogRef}>
         <ScrollCatalog
           shows={shows}
-          onEdit={(show) => { setEditingShow(show); setFormOpen(true); }}
-          onDelete={(show) => setDeleteTarget(show)}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
           onHistory={handleHistory}
-          onAdd={() => { setEditingShow(null); setFormOpen(true); }}
+          onAdd={handleAdd}
         />
       </div>
 
